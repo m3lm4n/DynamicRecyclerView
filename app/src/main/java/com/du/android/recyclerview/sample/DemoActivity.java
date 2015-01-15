@@ -69,8 +69,19 @@ public class DemoActivity extends Activity
         }
     }
 
+    public class DemoViewHolder2 extends RecyclerView.ViewHolder {
+        public TextView text;
 
-    public class RecyclerViewAdapterImpl extends RecyclerViewAdapter<DemoModel, DemoViewHolder> {
+        public DemoViewHolder2(View itemView) {
+            super(itemView);
+            text = (TextView) itemView.findViewById(R.id.demo_item_text);
+        }
+    }
+
+
+    public class RecyclerViewAdapterImpl extends RecyclerViewAdapter<DemoModel, RecyclerView.ViewHolder> {
+        private static final int VIEW_TYPE_1 = 0;
+        private static final int VIEW_TYPE_2 = 1;
 
         List<DemoModel> items = new ArrayList<DemoModel>();
 
@@ -78,6 +89,11 @@ public class DemoActivity extends Activity
         @Override
         public void swapPositions(int from, int to) {
             Collections.swap(items, from, to);
+            StringBuilder sb = new StringBuilder();
+            for(DemoModel dm: items){
+                sb.append(dm.id + ", ");
+            }
+            Log.e("ITEMS", sb.toString());
         }
 
         RecyclerViewAdapterImpl() {
@@ -90,19 +106,37 @@ public class DemoActivity extends Activity
 
         }
 
-
         @Override
-        public DemoViewHolder onCreateViewHolder(ViewGroup viewGroup, final int position) {
-            View itemView = LayoutInflater.from(viewGroup.getContext()).
-                    inflate(R.layout.demo_item, viewGroup, false);
-            return new DemoViewHolder(itemView);
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, final int viewType) {
+            RecyclerView.ViewHolder holder = null;
+            switch(viewType) {
+                case VIEW_TYPE_1:
+                    View itemView = LayoutInflater.from(viewGroup.getContext()).
+                        inflate(R.layout.demo_item, viewGroup, false);
+                    holder = new DemoViewHolder(itemView);
+                    break;
+                case VIEW_TYPE_2:
+                    View itemView2 = LayoutInflater.from(viewGroup.getContext()).
+                            inflate(R.layout.demo_item2, viewGroup, false);
+                    holder = new DemoViewHolder(itemView2);
+            }
+            return holder;
         }
 
         @Override
-        public void onBindViewHolder(DemoViewHolder viewHolder, final int position) {
+        public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
             super.onBindViewHolder(viewHolder, position);
             DemoModel model = items.get(position);
-            viewHolder.text.setText(model.text);
+            if(viewHolder instanceof DemoViewHolder){
+                ((DemoViewHolder) viewHolder).text.setText(model.text);
+            } else if(viewHolder instanceof DemoViewHolder2){
+                ((DemoViewHolder2) viewHolder).text.setText(model.text);
+            }
+        }
+
+        @Override
+        public void onViewRecycled(RecyclerView.ViewHolder holder) {
+            super.onViewRecycled(holder);
         }
 
         @Override
@@ -120,6 +154,10 @@ public class DemoActivity extends Activity
 
         }
 
+        @Override
+        public int getItemViewType(int position) {
+            return ((int) items.get(position).id) % 2;
+        }
 
         public void removeItem(int pos) {
             items.remove(pos);
