@@ -56,6 +56,7 @@ import android.widget.ImageView;
  * <p/>
  * Actual drag is started by calling {@link #startDrag()} somewhere later, for eg. in long touch listener
  */
+
 public abstract class DragDropTouchListener implements RecyclerView.OnItemTouchListener {
     private static final String LOG_TAG = "DRAG-DROP";
     private static final int MOVE_DURATION = 150;
@@ -152,7 +153,6 @@ public abstract class DragDropTouchListener implements RecyclerView.OnItemTouchL
         activity.addContentView(mobileView, lp);
         mobileView.bringToFront();
         viewUnder.setVisibility(View.INVISIBLE);
-
     }
 
     private boolean down(MotionEvent event) {
@@ -202,20 +202,12 @@ public abstract class DragDropTouchListener implements RecyclerView.OnItemTouchL
 
     private void doSwitch(final View switchView, final int originalViewPos, final int switchViewPos) {
         View originalView = getViewByPosition(originalViewPos);
-        int switchViewTop = switchView.getTop();
-        int originalViewTop = originalView.getTop();
-        int delta = originalViewTop - switchViewTop;
 
-        onItemSwitch(recyclerView, originalViewPos, switchViewPos);
-
-        switchView.setVisibility(View.INVISIBLE);
-        originalView.setVisibility(View.VISIBLE);
-
-        originalView.setTranslationY(-delta);
-        originalView.animate().translationYBy(delta).setDuration(MOVE_DURATION);
+        switchView.setVisibility(View.VISIBLE);
+        originalView.setVisibility(View.INVISIBLE);
 
         mobileViewCurrentPos = switchViewPos;
-
+        onItemSwitch(recyclerView, originalViewPos, switchViewPos);
     }
 
     private boolean up(MotionEvent event) {
@@ -245,10 +237,8 @@ public abstract class DragDropTouchListener implements RecyclerView.OnItemTouchL
                         parent.removeView(mobileView);
                         mobileView = null;
                     }
-
                 }
             });
-
         }
 
         dragging = false;
@@ -261,7 +251,6 @@ public abstract class DragDropTouchListener implements RecyclerView.OnItemTouchL
         RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForPosition(position);
         return viewHolder == null ? null : viewHolder.itemView;
     }
-
 
     private boolean scrollIfNeeded() {
         int height = recyclerView.getHeight();

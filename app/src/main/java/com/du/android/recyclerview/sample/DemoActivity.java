@@ -208,7 +208,12 @@ public class DemoActivity extends Activity
             protected void onItemSwitch(RecyclerView recyclerView, int from, int to) {
                 adapter.swapPositions(from, to);
                 adapter.clearSelection(from);
-                adapter.notifyItemChanged(to);
+                if(to < from) {
+                    adapter.notifyItemMoved(from, to);
+                } else {
+                    adapter.notifyItemMoved(to, from);
+                }
+
                 if(actionMode!=null) actionMode.finish();
             }
 
