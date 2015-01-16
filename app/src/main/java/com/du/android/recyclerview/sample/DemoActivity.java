@@ -89,11 +89,6 @@ public class DemoActivity extends Activity
         @Override
         public void swapPositions(int from, int to) {
             Collections.swap(items, from, to);
-            StringBuilder sb = new StringBuilder();
-            for(DemoModel dm: items){
-                sb.append(dm.id + ", ");
-            }
-            Log.e("ITEMS", sb.toString());
         }
 
         RecyclerViewAdapterImpl() {
